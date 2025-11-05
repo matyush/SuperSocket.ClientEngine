@@ -102,6 +102,16 @@ namespace SuperSocket.ClientEngine
             try
             {
                 length = stream.EndRead(result);
+            
+                if (length == 0)
+                {
+                    if (EnsureSocketClosed(state.Client))
+                        OnClosed();
+
+                    return;
+                }
+
+                OnDataReceived(Buffer.Array, Buffer.Offset, length);
             }
             catch (Exception e)
             {
@@ -113,16 +123,6 @@ namespace SuperSocket.ClientEngine
 
                 return;
             }
-
-            if (length == 0)
-            {
-                if (EnsureSocketClosed(state.Client))
-                    OnClosed();
-
-                return;
-            }
-
-            OnDataReceived(Buffer.Array, Buffer.Offset, length);
             BeginRead();
         }
 #endif
